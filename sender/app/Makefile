@@ -8,7 +8,7 @@ ifndef arch
    arch = IA32
 endif
 
-CCFLAGS = -Wall -D$(os) -I../src -finline-functions -O3
+CCFLAGS = -fPIC -U_FORTIFY_SOURCE -Wall -D$(os) -I../src -finline-functions -O3
 
 ifeq ($(arch), IA32)
    CCFLAGS += -DIA32 #-mcpu=pentiumpro -march=pentiumpro -mmmx -msse
@@ -26,7 +26,7 @@ ifeq ($(arch), SPARC)
    CCFLAGS += -DSPARC
 endif
 
-LDFLAGS = -L../src -ludt -lstdc++ -lpthread -lm
+LDFLAGS = -L../src -ludt -lstdc++ -lpthread -lm -pie -rdynamic
 
 ifeq ($(os), UNIX)
    LDFLAGS += -lsocket
@@ -58,6 +58,8 @@ incast_client: incast_client.o
 
 clean:
 	rm -f *.o $(APP)
+	rm -f ../../../../build/bin_dce/$(APP) 
 
 install:
 	export PATH=$(DIR):$$PATH
+	#cp $(APP) ../../../../build/bin_dce
